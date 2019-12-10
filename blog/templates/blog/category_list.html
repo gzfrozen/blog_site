@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+{% block title %}カテゴリー一覧{% endblock %}
+{% block body %}
+<h1>カテゴリー一覧</h1>
+<ul>
+    {% for category in object_list %}
+    <li>
+        <a href="{% url 'blog:category_post' category.slug %}">{{ category.name }} {{ category.num_posts }}</a>
+    </li>
+    {% empty %}
+    <li>カテゴリーは存在しません。</li>
+    {% endfor %}
+</ul>
+{% endblock %}

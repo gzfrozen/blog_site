@@ -1,0 +1,23 @@
+{% extends 'blog/base.html' %}
+{% block title %}「{{ tag.name }}」の投稿一覧{% endblock %}
+{% block body %}
+<h1>「{{ tag.name }}」の投稿一覧</h1>
+<ul>
+    {% for post in object_list %}
+    {% if user.is_authenticated or post.is_public %}
+    <li>
+        {% if not post.is_public %}[下書き]{% endif %}
+        <a href="{% url 'blog:post_detail' post.id %}">{{ post.title }}</a>
+    </li>
+    {% else %}
+    <li>
+        投稿はありません。
+    </li>
+    {% endif %}
+    {% empty %}
+    <li>
+        投稿はありません。
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

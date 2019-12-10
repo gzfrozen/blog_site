@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+{% block title %}タグ一覧{% endblock %}
+{% block body %}
+<h1>タグ一覧</h1>
+<ul>
+    {% for tag in object_list %}
+    <li>
+        <a href="{% url 'blog:tag_post' tag.slug %}">{{ tag.name }} {{ tag.num_posts }}</a>
+    </li>
+    {% empty %}
+    <li>タグは存在しません。</li>
+    {% endfor %}
+</ul>
+{% endblock %}

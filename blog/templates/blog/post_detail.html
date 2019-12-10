@@ -1,26 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>{{ object.title }}</title>
-</head>
-<h1>
-  {{ object.title }}
-</h1>
-<p>
-  {{ object.published_at|date }}
-</p>
-<p>
-  {{ object.category.name }}
-</p>
-
-<body>
-  {% for tag in object.tags.all %} {{ tag.name }} {% endfor %}
-</body>
-<hr />
+{% extends 'blog/base.html' %}
+{% block title %}{{ object.title }}{% endblock %}
+{% block body %}
+<h1>{{ object.title }}</h1>
+<p>{{ object.published_at|date }}</p>
+<p>{{ object.category.name }}</p>
+{% for tag in object.tags.all %} {{ tag.name }} {% endfor %}
+<hr>
 {{ object.content|safe }}
-
-</html>
+{% endblock %}

@@ -7,4 +7,9 @@
 {% for tag in object.tags.all %} {{ tag.name }} {% endfor %}
 <hr>
 {{ object.content|safe }}
+{% if content_image %}
+{% for image in content_image %}
+<img src="{{ image.content_image.url }}" title="{{ image.description }}" width="240" height="126">
+{% endfor %}
+{% endif %}
 {% endblock %}

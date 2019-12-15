@@ -1,5 +1,16 @@
 {
     "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
     "python.pythonPath": "C:\\Users\\gzfro\\Anaconda3\\envs\\blog_site\\python.exe",
-    "terminal.integrated.shellArgs.windows": ["/K", "C:\\Users\\gzfro\\Anaconda3\\Scripts\\activate.bat C:\\Users\\gzfro\\Anaconda3 & conda activate blog_site"]
+    "terminal.integrated.shellArgs.windows": [
+        "/K",
+        "C:\\Users\\gzfro\\Anaconda3\\Scripts\\activate.bat C:\\Users\\gzfro\\Anaconda3 & conda activate blog_site"
+    ],
+    "files.associations": {
+        "**/templates/*.html": "django-html",
+        "**/templates/*": "django-txt",
+        "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+    },
+    "emmet.includeLanguages": {
+        "django-html": "html"
+    }
 }

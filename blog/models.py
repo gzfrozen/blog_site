@@ -25,6 +25,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     description = models.TextField()
     creat_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -41,3 +42,12 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ContentImage(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.PROTECT)
+    content_image = models.ImageField(upload_to='post_content_images/')
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.post.title + ": " + str(self.id)

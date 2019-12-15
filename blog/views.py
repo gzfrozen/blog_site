@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from blog.models import Post, Category, Tag
+from blog.models import Post, Category, Tag, ContentImage
 # Create your views here.
 
 
@@ -17,6 +17,12 @@ class PostDetailView(DetailView):
         if not obj.is_public and not self.request.user.is_authenticated:
             raise Http404
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['content_image'] = ContentImage.objects.filter(
+            post__id=self.object.id)
+        return context
 
 
 class IndexView(ListView):

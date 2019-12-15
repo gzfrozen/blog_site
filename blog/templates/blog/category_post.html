@@ -2,27 +2,5 @@
 {% block title %}「{{ category.name }}」の投稿一覧{% endblock %}
 {% block body %}
 <h1>「{{ category.name }}」の投稿一覧</h1>
-<ul>
-    {% for post in object_list %}
-    {% if user.is_authenticated or post.is_public %}
-    <li>
-        {% if not post.is_public %}[下書き]{% endif %}
-        <a href="{% url 'blog:post_detail' post.id %}">{{ post.title }}</a>
-    </li>
-    {% if post.image %}
-    <a href="{% url 'blog:post_detail' post.id %}">
-        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="240" height="126">
-    </a>
-    {% endif %}
-    {% else %}
-    <li>
-        投稿は公開されてません。
-    </li>
-    {% endif %}
-    {% empty %}
-    <li>
-        投稿はありません。
-    </li>
-    {% endfor %}
-</ul>
+{% include "blog/post_list.html" %}
 {% endblock %}

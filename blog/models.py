@@ -51,3 +51,49 @@ class ContentImage(models.Model):
 
     def __str__(self):
         return self.post.title + ": " + str(self.id)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.CharField(max_length=50)
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def disapprove(self):
+        self.approved = False
+        self.save()
+
+    def __str__(self):
+        return self.text
+
+
+class Reply(models.Model):
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, related_name='replise')
+    author = models.CharField(max_length=50)
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def disapprove(self):
+        self.approved = False
+        self.save()
+
+    def __str__(self):
+        return self.text

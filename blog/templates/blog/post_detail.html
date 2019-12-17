@@ -1,15 +1,40 @@
 {% extends 'base/base.html' %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body %}
-<h1>{{ object.title }}</h1>
-<p>{{ object.published_at|date }}</p>
-<p>{{ object.category.name }}</p>
-{% for tag in object.tags.all %} {{ tag.name }} {% endfor %}
-<hr>
-{{ object.content|safe }}
-{% if content_image %}
-{% for image in content_image %}
-<img src="{{ image.content_image.url }}" title="{{ image.description }}" width="240" height="126">
-{% endfor %}
-{% endif %}
+<div class='container'>
+    <div class='row'>
+        <main class='col-md-8'>
+            <div class='card-mb-3'>
+                {% if object.image %}
+                <img class="card-img-top" src="{{ object.image.url }}" alt="{{ object.title }}">
+                {% endif %}
+                <div class="card-body">
+                    {% if not object.is_public %}
+                    <h1><span class="badge badge-secondary">下書き</span></h1>
+                    {% endif %}
+                    <h1 class="card-title">{{ object.title }}</h1>
+                    <p class='card-text'><a href="{% url 'blog:category_post' object.category.slug %}" class="btn btn-primary">{{ object.category.name }}</a></p>
+                    <p class='card-text'>{% for tag in object.tags.all %} <a href="{% url 'blog:tag_post' tag.slug %}" class="btn btn-primary">{{ tag.name }}</a> {% endfor %}</p>
+                    <p class="card-text">{{ object.published_at|date }}</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <p>{{ object.content|safe }}</p>
+                <hr>
+                <div class="row">
+                    {% if content_image %}
+                    {% for image in content_image %}
+                    <div class='card-mb-3'>
+                        <img class="card-img-top" src="{{ image.content_image.url }}" title="{{ image.description }}">
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+        <aside class="col-md-4">
+            {% include "blog/snippets/sidebar.html" %}
+        </aside>
+    </div>
+</div>
 {% endblock %}

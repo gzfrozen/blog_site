@@ -21,12 +21,6 @@ class PostDetailView(DetailView):
             raise Http404
         return obj
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['content_image'] = ContentImage.objects.filter(
-            post__id=self.object.id)
-        return context
-
 
 class IndexView(ListView):
     model = Post

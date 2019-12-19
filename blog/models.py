@@ -78,7 +78,7 @@ class Comment(models.Model):
 
 class Reply(models.Model):
     comment = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, related_name='replise')
+        Comment, on_delete=models.CASCADE, related_name='replies')
     author = models.CharField(max_length=50)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

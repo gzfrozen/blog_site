@@ -5,7 +5,7 @@
     <p>{{ comment.text|linebreaksbr }}</p>
     <p>
         <a href="{% url 'blog:reply_form' comment.pk %}">返信する</a>
-        {% if user.is_authenticated %}
+        {% if perms.blog.delete_comment %}
         {% if comment.approved %}
         <a class="text-success" href="{% url 'blog:comment_disapprove' comment.pk %}">ブロック</a>
         <a class="text-danger" href="{% url 'blog:comment_remove' comment.pk %}">削除</a>
@@ -22,7 +22,7 @@
         <strong>{{ reply.author }}</strong>・{{ reply.timestamp }}
         <p>{{ reply.text|linebreaksbr }}</p>
         <p>
-            {% if user.is_authenticated %}
+            {% if perms.blog.delete_reply %}
             {% if reply.approved %}
             <a class="text-success" href="{% url 'blog:reply_disapprove' reply.pk %}">ブロック</a>
             <a class="text-danger" href="{% url 'blog:reply_remove' reply.pk %}">削除</a>

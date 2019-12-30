@@ -25,7 +25,7 @@ SECRET_KEY = '#^ppph=a=y@m@yjw#(sp=gr$ff2&yzi8c4a8qdm*2yvzqm04)e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['18.177.204.0']
 
 
 # Application definition

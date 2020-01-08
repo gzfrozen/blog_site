@@ -25,7 +25,7 @@ SECRET_KEY = '#^ppph=a=y@m@yjw#(sp=gr$ff2&yzi8c4a8qdm*2yvzqm04)e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.177.204.0']
+ALLOWED_HOSTS = ['18.177.204.0', '127.0.0.1']
 
 
 # Application definition
@@ -129,5 +129,5 @@ STATICFILES_DIRS = [
 ]
 
 # Default redirect url after login and logout
-LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
 # LOGOUT_REDIRECT_URL = '/'

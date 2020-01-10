@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.detail import DetailView
@@ -13,7 +12,7 @@ from blog.models import Post, Category, Tag, ContentImage, Comment, Reply
 # Create your views here.
 
 
-class PostDetailView(LoginRequiredMixin, DetailView):
+class PostDetailView(DetailView):
     model = Post
 
     def get_object(self, queryset=None):

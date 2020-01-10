@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 
@@ -21,6 +22,8 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     tags = models.ManyToManyField(Tag, blank=True)
     title = models.CharField(max_length=255)

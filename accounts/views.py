@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib.auth.models import User
@@ -14,6 +15,9 @@ class ProfileView(LoginRequiredMixin,ListView):
 
     def get_queryset(self):
         username = self.kwargs['username']
+        login_username = self.request.user.username
+        if not login_username == username:
+            raise Http404('Not authorized to view.')
         self.user = get_object_or_404(
             User, username=username)
         return super().get_queryset().filter(user=self.user)

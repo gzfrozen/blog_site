@@ -8,4 +8,6 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('profile/<str:username>',
          ProfileView.as_view(), name='profile'),
+    path('signup',
+         SignupFormView.as_view(), name='signup'),
 ]

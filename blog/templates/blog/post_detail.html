@@ -28,7 +28,7 @@
                     <div class="row">
                         {% if object.content_images %}
                         {% for image in object.content_images.all %}
-                        <div class='card-mb-3'>
+                        <div class='col-12 col-md-6'>
                             <img class="card-img-top" src="{{ image.content_image.url }}"
                                 title="{{ image.description }}">
                         </div>

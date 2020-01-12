@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
+from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth import login, authenticate
@@ -13,24 +14,12 @@ from accounts.forms import UserCreateForm
 # Create your views here.
 
 
-class ProfileView(LoginRequiredMixin, ListView):
-    model = Post
-    template_name = 'accounts/profile.html'
-    paginate_by = 1
-
-    def get_queryset(self):
-        username = self.kwargs['username']
-        login_username = self.request.user.username
-        if not login_username == username:
-            raise Http404('Not authorized to view.')
-        self.user = get_object_or_404(
-            User, username=username)
-        return super().get_queryset().filter(user=self.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['username'] = self.user.username
-        return context
+class CustomLoginView(LoginView):
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields['username'].widget.attrs["class"] = "form-control"
+        form.fields['password'].widget.attrs["class"] = "form-control"
+        return form
 
 
 class SignupFormView(CreateView):
@@ -52,3 +41,23 @@ class SignupFormView(CreateView):
     def get(self, request, *args, **kwargs):
         form = UserCreateForm(request.POST)
         return render(request, 'accounts/signup.html', {'form': form, })
+
+
+class ProfileView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'accounts/profile.html'
+    paginate_by = 1
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        login_username = self.request.user.username
+        if not login_username == username:
+            raise Http404('Not authorized to view.')
+        self.user = get_object_or_404(
+            User, username=username)
+        return super().get_queryset().filter(user=self.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.user.username
+        return context

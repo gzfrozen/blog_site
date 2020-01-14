@@ -1,6 +1,36 @@
-from django.forms import ModelForm, TextInput, Textarea
+from django.forms import ModelForm, TextInput, Textarea, Select, SelectMultiple, ClearableFileInput
 
-from blog.models import Comment, Reply
+from blog.models import Post, Comment, Reply
+
+
+class PostForm(ModelForm):
+    class Meta:
+        model = Post
+        fields = ('category', 'tags', 'title',
+                  'content', 'image', 'description')
+        widgets = {
+            'category': Select(attrs={
+                'class': 'form-control',
+            }),
+            'tags': SelectMultiple(attrs={
+                'class': 'form-control',
+            }),
+            'title': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'ここにタイトルを入力してください。',
+            }),
+            'content': Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'ここでポストを編集してください。',
+            }),
+            'image': ClearableFileInput(attrs={
+                'class': 'form-control-file',
+            }),
+            'description': Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': '簡単の説明。',
+            }),
+        }
 
 
 class CommentForm(ModelForm):

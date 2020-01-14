@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 
-from blog.forms import CommentForm, ReplyForm
+from blog.forms import PostForm, CommentForm, ReplyForm
 from blog.models import Post, Category, Tag, ContentImage, Comment, Reply
 # Create your views here.
 
@@ -94,8 +94,14 @@ class SearchPostView(ListView):
         return context
 
 
+class PostFormView(CreateView):
+    template_name = 'blog/post_form.html'
+    form_class = PostForm
+    success_url = '/'
+
+
 class CommentFormView(CreateView):
-    model = Comment
+    template_name = 'blog/comment_form.html'
     form_class = CommentForm
 
     def form_valid(self, form):
@@ -134,7 +140,7 @@ def comment_remove(request, pk):
 
 
 class ReplyFormView(CreateView):
-    model = Reply
+    template_name = 'blog/reply_form.html'
     form_class = ReplyForm
 
     def form_valid(self, form):

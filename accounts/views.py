@@ -35,7 +35,7 @@ class SignupFormView(CreateView):
             password = form.cleaned_data.get('password1')
             auth = authenticate(username=username, password=password)
             login(request, auth)
-            return redirect('accounts:profile', self.request.POST.get('username'))
+            return redirect('accounts:profile', username=self.request.POST.get('username'))
         return render(request, 'accounts/signup.html', {'form': form, })
 
     def get(self, request, *args, **kwargs):

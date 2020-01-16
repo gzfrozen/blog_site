@@ -100,6 +100,17 @@ class PostFormView(CreateView):
     success_url = '/'
 
 
+class PostSaveView(PostFormView):
+    def post(self, request, *args, **kwargs):
+        form = PostForm(data=request.POST)
+        if form.is_valid():
+            is_public = form.save(commit=False)
+            is_public.is_public = True
+            is_public.save()
+            form.save_m2m()
+            return redirect('/')
+
+
 class CommentFormView(CreateView):
     template_name = 'blog/comment_form.html'
     form_class = CommentForm

@@ -46,6 +46,7 @@ class SignupFormView(CreateView):
 class ProfileView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'accounts/profile.html'
+    login_url = '/accounts/login'
     paginate_by = 1
 
     def get_queryset(self):

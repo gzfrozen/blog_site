@@ -1,5 +1,6 @@
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.detail import DetailView
@@ -94,21 +95,27 @@ class SearchPostView(ListView):
         return context
 
 
-class PostFormView(CreateView):
+class PostFormView(LoginRequiredMixin, CreateView):
     template_name = 'blog/post_form.html'
     form_class = PostForm
     success_url = '/'
+    login_url = '/accounts/login'
+
+    def post(self, request, *args, **kwargs):
+        form = PostForm(data=request.POST)
+        login_user = self.request.user
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = login_user
+            if isinstance(self, PostSaveView):
+                instance.is_public = True
+            instance.save()
+            form.save_m2m()
+            return redirect(self.success_url)
 
 
 class PostSaveView(PostFormView):
-    def post(self, request, *args, **kwargs):
-        form = PostForm(data=request.POST)
-        if form.is_valid():
-            is_public = form.save(commit=False)
-            is_public.is_public = True
-            is_public.save()
-            form.save_m2m()
-            return redirect('/')
+    pass
 
 
 class CommentFormView(CreateView):

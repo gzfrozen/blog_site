@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,8 +8,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 
-from blog.forms import PostForm, ContentImageForm, CommentForm, ReplyForm
-from blog.models import Post, Category, Tag, ContentImage, Comment, Reply
+from blog.forms import *
+from blog.models import *
 # Create your views here.
 
 
@@ -96,39 +97,33 @@ class SearchPostView(ListView):
 
 
 class PostFormView(LoginRequiredMixin, CreateView):
+    model = Post
     template_name = 'blog/post_form.html'
     form_class = PostForm
     success_url = '/'
     login_url = '/accounts/login'
 
-    def get(self, request, *args, **kwargs):
-        post_form = PostForm(request.POST, request.FILES)
-        content_image_form = ContentImageForm(request.POST, request.FILES)
-        return render(request, self.template_name, {'post_form': post_form, 'content_image_form': content_image_form, })
-
-    def post(self, request, *args, **kwargs):
-        post_form = PostForm(request.POST, request.FILES)
-        content_image_form = ContentImageForm(request.POST, request.FILES)
-        login_user = request.user
-        if post_form.is_valid():
-            print('Post form is valid.')
-            post_form_instance = post_form.save(commit=False)
-            post_form_instance.user = login_user
-            if isinstance(self, PostSaveView):
-                post_form_instance.is_public = True
-            post_form_instance.save()
-            post_form.save_m2m()
-            if content_image_form.is_valid():
-                print('Content image form is valid')
-                content_image_form_instance = content_image_form.save(
-                    commit=False)
-                post = Post.objects.get(id=post_form_instance.id)
-                content_image_form_instance.post = post
-                content_image_form_instance.save()
-            return redirect(self.success_url)
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['content_image_formset'] = ContentImageFormSet(
+                self.request.POST, self.request.FILES)
         else:
-            print('faild')
-            return redirect(self.success_url)
+            data['content_image_formset'] = ContentImageFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        content_image_formset = context['content_image_formset']
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            if isinstance(self, PostSaveView):
+                form.instance.is_public = True
+            self.object = form.save()
+            if content_image_formset.is_valid():
+                content_image_formset.instance = self.object
+                content_image_formset.save()
+        return super().form_valid(form)
 
 
 class PostSaveView(PostFormView):

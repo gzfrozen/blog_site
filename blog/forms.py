@@ -1,4 +1,5 @@
-from django.forms import ModelForm, TextInput, Textarea, Select, SelectMultiple, ClearableFileInput, ImageField
+from django.forms import (inlineformset_factory, ModelForm, TextInput,
+                          Textarea, Select, SelectMultiple, ClearableFileInput)
 
 from blog.models import Post, ContentImage, Comment, Reply
 
@@ -34,19 +35,22 @@ class PostForm(ModelForm):
 
 
 class ContentImageForm(ModelForm):
-    content_image = ImageField(required=False, widget=ClearableFileInput(attrs={
-        'class': 'form-control-file',
-    }))
-
     class Meta:
         model = ContentImage
         fields = ('content_image', 'description')
         widgets = {
+            'content_image': ClearableFileInput(attrs={
+                'class': 'form-control-file',
+            }),
             'description': Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': '画像の説明。',
             }),
         }
+
+
+ContentImageFormSet = inlineformset_factory(
+    Post, ContentImage, form=ContentImageForm, can_delete=False)
 
 
 class CommentForm(ModelForm):

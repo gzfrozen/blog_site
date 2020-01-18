@@ -1,7 +1,7 @@
 <form method="post" action="/post/newpost" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ post_form.as_p }}
-    {{ content_image_form.as_p }}
+    {{ form.as_p }}
+    {{ content_image_formset.as_p }}
     <button type="submit" class="btn btn-primary">一時保存</button>
     <button type="submit" formaction="/post/newpost/save"　class="btn btn-primary">保存</button>
 </form>

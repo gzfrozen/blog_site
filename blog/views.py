@@ -2,12 +2,12 @@ from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 
-from blog.forms import PostForm, CommentForm, ReplyForm
+from blog.forms import PostForm, ContentImageForm, CommentForm, ReplyForm
 from blog.models import Post, Category, Tag, ContentImage, Comment, Reply
 # Create your views here.
 
@@ -101,16 +101,33 @@ class PostFormView(LoginRequiredMixin, CreateView):
     success_url = '/'
     login_url = '/accounts/login'
 
+    def get(self, request, *args, **kwargs):
+        post_form = PostForm(request.POST, request.FILES)
+        content_image_form = ContentImageForm(request.POST, request.FILES)
+        return render(request, self.template_name, {'post_form': post_form, 'content_image_form': content_image_form, })
+
     def post(self, request, *args, **kwargs):
-        form = PostForm(data=request.POST)
-        login_user = self.request.user
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.user = login_user
+        post_form = PostForm(request.POST, request.FILES)
+        content_image_form = ContentImageForm(request.POST, request.FILES)
+        login_user = request.user
+        if post_form.is_valid():
+            print('Post form is valid.')
+            post_form_instance = post_form.save(commit=False)
+            post_form_instance.user = login_user
             if isinstance(self, PostSaveView):
-                instance.is_public = True
-            instance.save()
-            form.save_m2m()
+                post_form_instance.is_public = True
+            post_form_instance.save()
+            post_form.save_m2m()
+            if content_image_form.is_valid():
+                print('Content image form is valid')
+                content_image_form_instance = content_image_form.save(
+                    commit=False)
+                post = Post.objects.get(id=post_form_instance.id)
+                content_image_form_instance.post = post
+                content_image_form_instance.save()
+            return redirect(self.success_url)
+        else:
+            print('faild')
             return redirect(self.success_url)
 
 

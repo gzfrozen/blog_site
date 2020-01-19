@@ -22,7 +22,7 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(
+    created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     tags = models.ManyToManyField(Tag, blank=True)
@@ -49,7 +49,7 @@ class Post(models.Model):
 
 class ContentImage(models.Model):
     post = models.ForeignKey(
-        Post, on_delete=models.PROTECT, related_name='content_images')
+        Post, on_delete=models.CASCADE, related_name='content_images')
     content_image = models.ImageField(upload_to='post_content_images/')
     description = models.TextField(blank=True)
 

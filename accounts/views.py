@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.db import transaction
 from django.views.generic import CreateView, ListView
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.contrib.auth import login, authenticate
+from django.urls import reverse_lazy
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 
@@ -24,23 +25,18 @@ class CustomLoginView(LoginView):
 
 class SignupFormView(CreateView):
     template_name = 'accounts/signup.html'
+    form_class = UserCreateForm
 
-    def post(self, request, *args, **kwargs):
-        form = UserCreateForm(data=request.POST)
-        if form.is_valid():
-            user = form.save()
+    def form_valid(self, form):
+        with transaction.atomic():
+            valid = super().form_valid(form)
             group = Group.objects.get(name='norm_user')
-            user.groups.add(group)
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            auth = authenticate(username=username, password=password)
-            login(request, auth)
-            return redirect('accounts:profile', username=self.request.POST.get('username'))
-        return render(request, 'accounts/signup.html', {'form': form, })
+            self.object.groups.add(group)
+        login(self.request, self.object)
+        return valid
 
-    def get(self, request, *args, **kwargs):
-        form = UserCreateForm(request.POST)
-        return render(request, 'accounts/signup.html', {'form': form, })
+    def get_success_url(self):
+        return reverse_lazy('accounts:profile', kwargs={'username': self.object.username})
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -56,7 +52,7 @@ class ProfileView(LoginRequiredMixin, ListView):
             raise Http404('Not authorized to view.')
         self.user = get_object_or_404(
             User, username=username)
-        return super().get_queryset().filter(user=self.user)
+        return super().get_queryset().filter(created_by=self.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

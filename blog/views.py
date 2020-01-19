@@ -3,7 +3,7 @@ from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
@@ -116,7 +116,7 @@ class PostFormView(LoginRequiredMixin, CreateView):
         context = self.get_context_data()
         content_image_formset = context['content_image_formset']
         with transaction.atomic():
-            form.instance.user = self.request.user
+            form.instance.created_by = self.request.user
             if isinstance(self, PostSaveView):
                 form.instance.is_public = True
             self.object = form.save()
@@ -135,10 +135,9 @@ class CommentFormView(CreateView):
     form_class = CommentForm
 
     def form_valid(self, form):
-        comment = form.save(commit=False)
         post_pk = self.kwargs['pk']
-        comment.post = get_object_or_404(Post, pk=post_pk)
-        comment.save()
+        form.instance.post = get_object_or_404(Post, pk=post_pk)
+        form.save()
         return redirect('blog:post_detail', pk=post_pk)
 
     def get_context_data(self, **kwargs):
@@ -174,11 +173,10 @@ class ReplyFormView(CreateView):
     form_class = ReplyForm
 
     def form_valid(self, form):
-        reply = form.save(commit=False)
         comment_pk = self.kwargs['pk']
-        reply.comment = get_object_or_404(Comment, pk=comment_pk)
-        reply.save()
-        return redirect('blog:post_detail', pk=reply.comment.post.pk)
+        form.instance.comment = get_object_or_404(Comment, pk=comment_pk)
+        form.save()
+        return redirect('blog:post_detail', pk=form.instance.comment.post.pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

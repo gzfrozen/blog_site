@@ -19,6 +19,9 @@
     </a>
     <p class="card-text">{{ post.published_at|date }}</p>
     <a href="{% url 'blog:post_detail' post.id %}" class="btn btn-primary">記事を読む</a>
+    {% if user == post.created_by %}
+    <a href="{% url 'blog:post_update' post.id %}" class="btn btn-danger">編集する</a>
+    {% endif %}
   </div>
 </div>
 

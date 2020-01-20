@@ -13,9 +13,11 @@
                         {% if not object.is_public %}
                         <h1><span class="badge badge-secondary">下書き</span></h1>
                         {% endif %}
+                        {% if object.created_by %}
                         <a href="{% url 'accounts:profile' object.created_by.username %}">
                             <p class="card-text">@{{ object.created_by.username }}</p>
                         </a>
+                        {% endif %}
                         <h1 class="card-title">{{ object.title }}</h1>
                         <p class='card-text'><a href="{% url 'blog:category_post' object.category.slug %}"
                                 class="btn btn-primary">{{ object.category.name }}</a></p>

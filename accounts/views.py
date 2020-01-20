@@ -43,13 +43,13 @@ class ProfileView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'accounts/profile.html'
     login_url = '/accounts/login'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_queryset(self):
         username = self.kwargs['username']
-        login_username = self.request.user.username
-        if not login_username == username:
-            raise Http404('Not authorized to view.')
+        # login_username = self.request.user.username
+        # if not login_username == username:
+        #     raise Http404('Not authorized to view.')
         self.user = get_object_or_404(
             User, username=username)
         return super().get_queryset().filter(created_by=self.user)

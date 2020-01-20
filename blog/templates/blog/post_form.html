@@ -1,7 +1,23 @@
-<form method="post" action="/post/newpost" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {{ content_image_formset.as_p }}
-    <button type="submit" class="btn btn-primary">一時保存</button>
-    <button type="submit" formaction="/post/newpost/save"　class="btn btn-primary">保存</button>
-</form>
+{% extends 'base/base.html' %}
+{% block title %}新しい投稿{% endblock %}
+{% block content %}
+<div class='container'>
+    <div class='row'>
+        <main class='col-md-12'>
+            <form method="post" action="/post/newpost" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                {{ content_image_formset.as_p }}
+                <button type="submit" class="btn btn-primary">一時保存</button>
+                <button type="submit" formaction="/post/newpost/save" class="btn btn-primary">保存</button>
+            </form>
+        </main>
+    </div>
+</div>
+{% endblock %}

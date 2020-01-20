@@ -9,6 +9,15 @@ class PostForm(ModelForm):
         model = Post
         fields = ('category', 'tags', 'title',
                   'content', 'image', 'description')
+        labels = {
+            'category': 'カテゴリー（必要）',
+            'tags': 'タグ（複数選択可）',
+            'title': 'タイトル（必要）',
+            'content': 'ポスト本文（必要）',
+            'image': 'タイトル画像（省略可）',
+            'description': '内容説明（必要）',
+        }
+
         widgets = {
             'category': Select(attrs={
                 'class': 'form-control',
@@ -22,13 +31,14 @@ class PostForm(ModelForm):
             }),
             'content': Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'ここでポストを編集してください。',
+                'placeholder': 'ここでポスト本文を編集してください。',
             }),
             'image': ClearableFileInput(attrs={
                 'class': 'form-control-file',
             }),
             'description': Textarea(attrs={
                 'class': 'form-control',
+                'rows': 3,
                 'placeholder': '簡単の説明。',
             }),
         }
@@ -38,12 +48,17 @@ class ContentImageForm(ModelForm):
     class Meta:
         model = ContentImage
         fields = ('content_image', 'description')
+        labels = {
+            'content_image': '添付画像（省略可）',
+            'description': '画像説明（省略可）',
+        }
         widgets = {
             'content_image': ClearableFileInput(attrs={
                 'class': 'form-control-file',
             }),
             'description': Textarea(attrs={
                 'class': 'form-control',
+                'rows': 1,
                 'placeholder': '画像の説明。',
             }),
         }

@@ -26,7 +26,7 @@ class PostDetailView(DetailView):
 class IndexView(ListView):
     model = Post
     template_name = 'blog/index.html'
-    paginate_by = 1
+    paginate_by = 5
 
 
 class CategoryListView(ListView):
@@ -37,7 +37,7 @@ class CategoryListView(ListView):
 class CategoryPostView(ListView):
     model = Post
     template_name = 'blog/category_post.html'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_queryset(self):
         category_slug = self.kwargs['category_slug']
@@ -59,7 +59,7 @@ class TagListView(ListView):
 class TagPostView(ListView):
     model = Post
     template_name = 'blog/tag_post.html'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_queryset(self):
         tag_slug = self.kwargs['tag_slug']
@@ -75,7 +75,7 @@ class TagPostView(ListView):
 class SearchPostView(ListView):
     model = Post
     template_name = 'blog/search_post.html'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_queryset(self):
         query = self.request.GET.get('q', None)
@@ -119,6 +119,8 @@ class PostFormView(LoginRequiredMixin, CreateView):
             form.instance.created_by = self.request.user
             if isinstance(self, PostSaveView):
                 form.instance.is_public = True
+            else:
+                form.instance.is_public = False
             self.object = form.save()
             if content_image_formset.is_valid():
                 content_image_formset.instance = self.object

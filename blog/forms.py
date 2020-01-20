@@ -13,7 +13,7 @@ class PostForm(ModelForm):
             'category': 'カテゴリー（必要）',
             'tags': 'タグ（複数選択可）',
             'title': 'タイトル（必要）',
-            'content': 'ポスト本文（必要）',
+            'content': '本文（必要）',
             'image': 'タイトル画像（省略可）',
             'description': '内容説明（必要）',
         }
@@ -31,7 +31,7 @@ class PostForm(ModelForm):
             }),
             'content': Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'ここでポスト本文を編集してください。',
+                'placeholder': 'ここで本文を編集してください。',
             }),
             'image': ClearableFileInput(attrs={
                 'class': 'form-control-file',

@@ -1,12 +1,13 @@
 from django.db import transaction
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import Http404, HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from blog.forms import *
 from blog.models import *
@@ -96,11 +97,10 @@ class SearchPostView(ListView):
         return context
 
 
-class PostFormView(LoginRequiredMixin, CreateView):
+class PostFormMixin(LoginRequiredMixin):
     model = Post
     template_name = 'blog/post_form.html'
     form_class = PostForm
-    success_url = '/'
     login_url = '/accounts/login'
 
     def get_context_data(self, **kwargs):
@@ -117,7 +117,7 @@ class PostFormView(LoginRequiredMixin, CreateView):
         content_image_formset = context['content_image_formset']
         with transaction.atomic():
             form.instance.created_by = self.request.user
-            if isinstance(self, PostSaveView):
+            if 'save' in self.request.POST:
                 form.instance.is_public = True
             else:
                 form.instance.is_public = False
@@ -125,11 +125,30 @@ class PostFormView(LoginRequiredMixin, CreateView):
             if content_image_formset.is_valid():
                 content_image_formset.instance = self.object
                 content_image_formset.save()
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('blog:post_detail', kwargs={'pk': self.object.id})
 
 
-class PostSaveView(PostFormView):
+class PostFormView(PostFormMixin, CreateView):
     pass
+
+
+class PostUpdateView(UserPassesTestMixin, PostFormMixin, UpdateView):
+    def test_func(self):
+        created_by = self.get_object().created_by
+        return self.request.user == created_by
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['content_image_formset'] = ContentImageFormSet(
+                self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['content_image_formset'] = ContentImageFormSet(
+                instance=self.object)
+        return data
 
 
 class CommentFormView(CreateView):

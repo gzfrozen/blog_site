@@ -27,23 +27,23 @@
                         <p class="card-text">{{ object.published_at|date }}</p>
                     </div>
                 </div>
-                <div class="text-center">
-                    <p>{{ object.content|safe }}</p>
-                    <hr>
-                    <div class="row">
-                        {% if object.content_images %}
-                        {% for image in object.content_images.all %}
-                        <div class='col-12 col-md-6'>
-                            <img class="card-img-top" src="{{ image.content_image.url }}"
-                                title="{{ image.description }}">
-                        </div>
-                        {% endfor %}
-                        {% endif %}
+                <p>{{ object.content|safe }}</p>
+                <hr>
+                {% if object.content_images %}
+                <div class="row">
+                    {% for image in object.content_images.all %}
+                    <div class='col-12 col-md-6'>
+                        <img class="card-img-top" src="{{ image.content_image.url }}" title="{{ image.description }}">
                     </div>
+                    {% endfor %}
                 </div>
+                {% endif %}
             </article>
             <article class="comment-area">
                 <a class="btn btn-primary my-3" href="{% url 'blog:comment_form' post.pk %}">コメントを投稿する</a>
+                {% if user == post.created_by %}
+                <a href="{% url 'blog:post_update' post.id %}" class="btn btn-danger">編集する</a>
+                {% endif %}
                 {% include "blog/snippets/comments.html" %}
             </article>
         </main>
